@@ -14,9 +14,9 @@ app.use(bodyParser.json());
 
 // 라우트 설정
 app.use('/api/budgets', require('./routes/budgetRoutes'));
-// app.use('/api/transactions', require('./routes/transactionRoutes'));
-// app.use('/api/pots', require('./routes/potRoutes'));
-// app.use('/api/recurrings', require('./routes/recurringRoutes'));
+app.use('/api/transactions', require('./routes/transactionRoutes'));
+app.use('/api/pots', require('./routes/potRoutes'));
+app.use('/api/recurrings', require('./routes/recurringRoutes'));
 
 
 // // 기본 라우트

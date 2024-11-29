@@ -7,6 +7,8 @@ const TransactionSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   amount: { type: Number, required: true },
   recurring: { type: Boolean, default: false },
-});
+  },
+  { versionKey: false } 
+);
 
 module.exports = mongoose.model('Transaction', TransactionSchema);
