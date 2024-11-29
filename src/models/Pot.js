@@ -5,7 +5,7 @@ const PotSchema = new mongoose.Schema(
     name: { type: String, unique: true, required: true },
     target: { type: Number, required: true },
     currentAmount: { type: Number, required: true },
-    color: { type: String, required: true },
+    color: { type: String, unique: true, required: true },
   },
   { versionKey: false }
 );

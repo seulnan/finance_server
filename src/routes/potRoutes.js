@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Pot = require("../models/Pot");
+const { getAvailableColors } = require('../controllers/potController');
+
+// 사용 가능한 색상 가져오기
+router.get("/available-colors", getAvailableColors);
 
 // POST /api/pots - 새 Pot 생성
 router.post("/", async (req, res) => {
