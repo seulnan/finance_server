@@ -6,7 +6,14 @@ const Transaction = require('../models/Transaction');
 router.get('/', async (req, res) => {
   try {
     const recurrings = await Transaction.find({ recurring: true });
-    res.status(200).json(recurrings);
+
+    // 소수점 두 자리를 유지하도록 변환
+    const transformedRecurrings = recurrings.map((transaction) => ({
+      ...transaction._doc, // Mongoose 문서를 일반 JavaScript 객체로 변환
+      amount: transaction.amount.toFixed(2), // amount 소수점 두 자리 유지
+    }));
+
+    res.status(200).json(transformedRecurrings);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

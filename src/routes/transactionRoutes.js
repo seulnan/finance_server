@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Transaction = require('../models/Transaction');
 
-
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -30,11 +29,17 @@ router.get('/', async (req, res) => {
       .skip((parsedPage - 1) * parsedLimit)
       .limit(parsedLimit);
 
+    // 소수점 두 자리를 유지하도록 변환
+    const transformedTransactions = transactions.map((transaction) => ({
+      ...transaction._doc, // Mongoose 문서를 JavaScript 객체로 변환
+      amount: transaction.amount.toFixed(2), // amount 소수점 두 자리 유지
+    }));
+
     res.status(200).json({
       total,
       page: parsedPage,
       totalPages,
-      transactions,
+      transactions: transformedTransactions,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
