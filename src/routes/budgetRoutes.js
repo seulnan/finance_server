@@ -18,18 +18,32 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/budgets - 모든 Budget 조회
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const budgets = await Budget.find();
 
-    // 소수점 두 자리 유지
-    const transformedBudgets = budgets.map((budget) => ({
-      ...budget._doc,
-      limit: budget.limit.toFixed(2), // limit 소수점 두 자리 유지
-      used: budget.used.toFixed(2), // used 소수점 두 자리 유지
-    }));
+    // Budget과 관련된 Transactions 가져오기
+    const budgetsWithTransactions = await Promise.all(
+      budgets.map(async (budget) => {
+        const transactions = await Transaction.find({ category: budget.name })
+          .sort({ date: -1 }) // 최신순 정렬
+          .limit(3); // 최신 3개 Transactions만 가져오기
 
-    res.status(200).json(transformedBudgets);
+        return {
+          ...budget._doc,
+          limit: budget.limit.toFixed(2), // 소수점 두 자리 유지
+          used: budget.used.toFixed(2), // 소수점 두 자리 유지
+          latestSpending: transactions.map((transaction) => ({
+            avatar: transaction.avatar,
+            name: transaction.name,
+            date: transaction.date,
+            amount: transaction.amount.toFixed(2), // 소수점 두 자리 유지
+          })),
+        };
+      })
+    );
+
+    res.status(200).json(budgetsWithTransactions);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
