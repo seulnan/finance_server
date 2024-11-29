@@ -19,9 +19,9 @@ app.use('/api/budgets', require('./routes/budgetRoutes'));
 // app.use('/api/recurrings', require('./routes/recurringRoutes'));
 
 
-// 기본 라우트
-app.get('/', (req, res) => {
-  res.send('Family Budget API is running.');
-});
+// // 기본 라우트
+// app.get('/', (req, res) => {
+//   res.send('Family Budget API is running.');
+// });
 
 module.exports = app;
