@@ -42,7 +42,7 @@ router.patch("/:id", async (req, res) => {
     const updatedPot = await Pot.findByIdAndUpdate(
       req.params.id,
       { name, target, color },
-      { new: true, runValidators: true } // 수정된 데이터 반환 및 유효성 검사
+      { new: true, runValidators: true, context: "query", } // 수정된 데이터 반환 및 유효성 검사
     );
 
     if (!updatedPot) {

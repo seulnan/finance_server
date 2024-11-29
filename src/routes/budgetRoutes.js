@@ -59,22 +59,28 @@ router.get("/", async (req, res) => {
 });
 
 
-// Patch /api/budgets/:id - Budget 수정
-router.patch('/:id', async (req, res) => {
+// PATCH /api/budgets/:id - Budget 수정
+router.patch("/:id", async (req, res) => {
   const { id } = req.params;
   const { name, color, limit } = req.body;
+
   try {
+    // Budget 업데이트
     const updatedBudget = await Budget.findByIdAndUpdate(
       id,
       { name, color, limit },
-      { new: true, runValidators: true }
+      {
+        new: true, // 수정된 데이터를 반환
+        runValidators: true, // Mongoose 유효성 검사 실행
+        context: "query", // unique 오류 방지
+      }
     );
 
     if (!updatedBudget) {
-      return res.status(404).json({ message: 'Budget not found' });
+      return res.status(404).json({ message: "Budget not found" });
     }
 
-    // 소수점 두 자리를 유지한 데이터 반환
+    // 소수점 두 자리로 변환된 데이터 반환
     const transformedBudget = {
       ...updatedBudget._doc,
       limit: updatedBudget.limit.toFixed(2),
