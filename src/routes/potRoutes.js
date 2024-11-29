@@ -31,8 +31,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// PUT /api/pots/:id - Pot 수정
-router.put("/:id", async (req, res) => {
+// Patch /api/pots/:id - Pot 수정
+router.patch("/:id", async (req, res) => {
   const { name, target, color } = req.body; // 수정 가능한 필드
   try {
     const updatedPot = await Pot.findByIdAndUpdate(

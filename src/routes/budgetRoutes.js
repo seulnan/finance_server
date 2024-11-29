@@ -35,8 +35,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PUT /api/budgets/:id - Budget 수정
-router.put('/:id', async (req, res) => {
+// Patch /api/budgets/:id - Budget 수정
+router.patch('/:id', async (req, res) => {
   const { id } = req.params;
   const { name, color, limit } = req.body;
   try {
