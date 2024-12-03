@@ -76,4 +76,71 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// PATCH /api/pots/:id/add-savings - Add Savings
+router.patch("/:id/add-savings", async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const pot = await Pot.findById(req.params.id);
+    if (!pot) {
+      return res.status(404).json({ message: "Pot not found" });
+    }
+
+    // 새로운 currentAmount 계산
+    const newAmount = pot.currentAmount + amount;
+
+    console.log("newAmount:", newAmount);
+    // target 초과 여부 확인
+    if (newAmount > pot.target) {
+      return res
+        .status(400)
+        .json({ message: "Cannot exceed target savings amount." });
+    }
+
+    // currentAmount 업데이트
+    pot.currentAmount = newAmount;
+    await pot.save();
+
+    res.status(200).json({
+      message: "Savings added successfully.",
+      pot,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// PATCH /api/pots/:id/withdraw-savings - Withdraw Savings
+router.patch("/:id/withdraw-savings", async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const pot = await Pot.findById(req.params.id);
+    if (!pot) {
+      return res.status(404).json({ message: "Pot not found" });
+    }
+
+    // 새로운 currentAmount 계산
+    const newAmount = pot.currentAmount - amount;
+
+    // 음수 여부 확인
+    if (newAmount < 0) {
+      return res.status(400).json({
+        message: `Invalid operation: currentAmount cannot be negative.`,
+      });
+    }
+
+    // currentAmount 업데이트
+    pot.currentAmount = newAmount;
+    await pot.save();
+
+    res.status(200).json({
+      message: "Savings withdrawn successfully.",
+      pot,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
