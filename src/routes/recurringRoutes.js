@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Transaction = require('../models/Transaction');
+const RecurringBill = require('../models/RecurringBill');
 
 // GET /api/recurrings - Recurring Transactions 조회
 router.get('/', async (req, res) => {
   try {
-    const recurrings = await Transaction.find({ recurring: true });
+    const recurrings = await RecurringBill.find();
 
     // 소수점 두 자리를 유지하도록 변환
     const transformedRecurrings = recurrings.map((transaction) => ({
