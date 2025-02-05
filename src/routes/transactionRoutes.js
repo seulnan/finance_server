@@ -4,7 +4,7 @@ const Transaction = require("../models/Transaction");
 
 router.get("/", async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortOption = "Latest", category = "All" } =
+    const { page = 1, limit = 10, sortOption = "Latest", category = "All", search="" } =
       req.query;
 
     const parsedLimit = parseInt(limit);
@@ -24,8 +24,19 @@ router.get("/", async (req, res) => {
     // 정렬 기준 설정
     const sort = sortOptions[sortOption] || sortOptions["Latest"];
 
-    // 카테고리 필터 설정
-    const filter = category !== "All" ? { category } : {};
+    // 필터링 조건 설정
+    const filter = {};
+    if (category !== "All") filter.category = category; // 카테고리 필터 추가
+
+    // 검색 조건 추가 ($or 연산자 사용)
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } }, // name 검색
+        { category: { $regex: search, $options: "i" } }, // category 검색
+      ];
+    }
+
+    console.log("🛠 Applied Filter:", filter); // 필터 확인용 콘솔 출력
 
     // 필터링된 총 문서 수 계산
     const total = await Transaction.countDocuments(filter);
@@ -35,9 +46,9 @@ router.get("/", async (req, res) => {
     if (parsedPage > totalPages && totalPages > 0) {
       return res.status(200).json({
         total,
-        page: totalPages, // 마지막 유효 페이지 반환
+        page: totalPages,
         totalPages,
-        transactions: [], // 빈 배열 반환
+        transactions: [],
         message: "No more data available",
       });
     }
@@ -61,7 +72,7 @@ router.get("/", async (req, res) => {
       transactions: transformedTransactions,
     });
   } catch (error) {
-    console.error("Error occurred:", error.message); // 디버깅용 에러 메시지
+    console.error("Error occurred:", error.message);
     res.status(500).json({ message: error.message });
   }
 });
