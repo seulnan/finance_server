@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Pot = require("../models/Pot");
+const Overview = require("../models/Overview");
 const { getAvailableColors } = require('../controllers/potController');
 
 // 사용 가능한 색상 가져오기
@@ -116,6 +117,14 @@ router.patch("/:id/add-savings", async (req, res) => {
     // currentAmount 업데이트
     pot.currentAmount = newAmount;
     await pot.save();
+    
+    // Overview에서 currentBalance 차감
+    const overview = await Overview.findOne();
+    if (overview) {
+      overview.currentBalance -= amount;
+      overview.expenses += amount;
+      await overview.save();
+    }
 
     res.status(200).json({
       message: "Savings added successfully.",
@@ -149,11 +158,19 @@ router.patch("/:id/withdraw-savings", async (req, res) => {
     // currentAmount 업데이트
     pot.currentAmount = newAmount;
     await pot.save();
+    
+    // Overview에서 currentBalance 증가
+    const overview = await Overview.findOne();
+    if (overview) {
+      overview.currentBalance += amount;
+      overview.income += amount;
+      await overview.save();
+    }
 
     res.status(200).json({
       message: "Savings withdrawn successfully.",
       pot,
-    });
+    }); 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
