@@ -22,7 +22,7 @@ app.use(express.json()); // 최신 Express에서 body-parser 대체
 app.use(bodyParser.urlencoded({ extended: true })); // URL 인코딩된 데이터 파싱
 
 // 라우트 설정
-const routes = ['budget', 'transaction', 'pot', 'recurring'];
+const routes = ['budget', 'transaction', 'pot', 'recurring', 'overview'];
 routes.forEach((route) => {
   app.use(`/api/${route}`, require(`./routes/${route}Routes`));
 });
