@@ -79,17 +79,29 @@ router.delete("/:id", async (req, res) => {
 // PATCH /api/pots/:id/add-savings - Add Savings
 router.patch("/:id/add-savings", async (req, res) => {
   const { amount } = req.body;
+  console.log("amount:", amount);
 
   try {
     const pot = await Pot.findById(req.params.id);
     if (!pot) {
       return res.status(404).json({ message: "Pot not found" });
     }
+    
+    // amount가 존재하는지 
+    if (amount === undefined || amount === null) {
+      return res.status(400).json({ message: "Amount is required." });
+    }
 
+    // amount를 숫자로 변환하여 처리 & 유효성 검사
+    amount = parseFloat(amount);
+    if (isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ message: "Invalid amount. Please enter a positive number." });
+    }
     // 새로운 currentAmount 계산
     const newAmount = pot.currentAmount + amount;
 
     console.log("newAmount:", newAmount);
+    
     // target 초과 여부 확인
     if (newAmount > pot.target) {
       return res
