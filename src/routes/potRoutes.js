@@ -78,8 +78,8 @@ router.delete("/:id", async (req, res) => {
 
 // PATCH /api/pots/:id/add-savings - Add Savings
 router.patch("/:id/add-savings", async (req, res) => {
-  const { amount } = req.body;
-  console.log("amount:", amount);
+  let amount = req.body.amount;
+  console.log("amount (before parsing):", amount, "Type:", typeof amount);
 
   try {
     const pot = await Pot.findById(req.params.id);
@@ -93,10 +93,14 @@ router.patch("/:id/add-savings", async (req, res) => {
     }
 
     // amount를 숫자로 변환하여 처리 & 유효성 검사
-    amount = parseFloat(amount);
+    if (typeof amount !== "number") {
+      amount = parseFloat(amount);
+    }
+    console.log("amount (after parsing):", amount, "Type:", typeof amount);
     if (isNaN(amount) || amount <= 0) {
       return res.status(400).json({ message: "Invalid amount. Please enter a positive number." });
     }
+
     // 새로운 currentAmount 계산
     const newAmount = pot.currentAmount + amount;
 
