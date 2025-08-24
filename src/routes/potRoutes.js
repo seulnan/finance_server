@@ -87,13 +87,12 @@ router.patch("/:id/add-savings", async (req, res) => {
     if (!pot) {
       return res.status(404).json({ message: "Pot not found" });
     }
-    
-    // amount가 존재하는지 
+
+    // amount가 존재하는지
     if (amount === undefined || amount === null) {
       return res.status(400).json({ message: "Amount is required." });
     }
 
-    // amount를 숫자로 변환하여 처리 & 유효성 검사
     if (typeof amount !== "number") {
       amount = parseFloat(amount);
     }
@@ -106,7 +105,7 @@ router.patch("/:id/add-savings", async (req, res) => {
     const newAmount = pot.currentAmount + amount;
 
     console.log("newAmount:", newAmount);
-    
+
     // target 초과 여부 확인
     if (newAmount > pot.target) {
       return res
@@ -117,7 +116,7 @@ router.patch("/:id/add-savings", async (req, res) => {
     // currentAmount 업데이트
     pot.currentAmount = newAmount;
     await pot.save();
-    
+
     // Overview에서 currentBalance 차감
     const overview = await Overview.findOne();
     if (overview) {
@@ -158,7 +157,7 @@ router.patch("/:id/withdraw-savings", async (req, res) => {
     // currentAmount 업데이트
     pot.currentAmount = newAmount;
     await pot.save();
-    
+
     // Overview에서 currentBalance 증가
     const overview = await Overview.findOne();
     if (overview) {
@@ -170,7 +169,7 @@ router.patch("/:id/withdraw-savings", async (req, res) => {
     res.status(200).json({
       message: "Savings withdrawn successfully.",
       pot,
-    }); 
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

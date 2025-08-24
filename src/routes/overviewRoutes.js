@@ -3,7 +3,7 @@ const router = express.Router();
 const Overview = require("../models/Overview");
 
 // GET /api/overview - 현재 Overview 조회
-router.get("/", async (req, res) => {
+router.get("/overview/", async (req, res) => {
     try {
         const overview = await Overview.findOne(); // 하나의 데이터만 가져옴
         if (!overview) {
